@@ -1,0 +1,88 @@
+<!--
+ * @Author: BaoTong
+ * @Date: 2020-11-09 01:13:33
+ * @LastEditors: BaoTong
+ * @LastEditTime: 2020-11-09 01:27:36
+ * @FilePath: \11p6_practice\week05\Proxy\使用Range实现DOM精确操作-正常流里的拖拽.html
+ * @Description: edit
+-->
+<div id="container">
+    文字 文字 文字 文字 文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字 文字 文字 文字 文字
+    文字 文字 文字 文字 文字 文字 文字 文字 文字 文字
+</div>
+<div id="dragable" style="display:inline-block;width:100px;height:100px;background-color:aqua"></div>
+
+<script>
+    let dragable=document.getElementById("dragable");
+
+    let baseX = 0,baseY = 0;
+
+    dragable.addEventListener("mousedown",function(event) {
+        let startX = event.clientX,startY = event.clientY
+
+        let up = event =>{
+            baseX = baseX + event.clientX -startX
+            baseY = baseY + event.clientY -startY
+            document.removeEventListener("mousemove",move);
+            document.removeEventListener("mouseup",up);
+        }
+
+        let move = event =>{
+            // dragable.style.transform = `translate(${baseX+event.clientX-startX}px,${baseY+event.clientY-startY}px)`
+            let range = getNearest(event.clientX,event.clientY);//找到最近的位置
+            range.insertNode(dragable)//插入元素
+        }
+        document.addEventListener("mousemove",move)
+        document.addEventListener("mouseup",up)
+    })
+
+    let ranges = [];
+
+    let container = document.getElementById("container");
+    for(let i=0;i<container.childNodes[0].textContent.length;i++){
+        let range = document.createRange();
+        range.setStart(container.childNodes[0],i);
+        range.setEnd(container.childNodes[0],i);
+
+        ranges.push(range)
+    }
+
+    //计算离要插入的点最近的位置
+    function getNearest(x,y) {
+        let min = Infinity;
+        let nearest = null;
+
+        for(let range of ranges){
+            let rect = range.getBoundingClientRect();
+            let distance = (rect.x - x)**2 + (rect.y-y)**2;
+            if(distance<min){
+                nearest = range;
+                min = distance;
+            }
+        }
+        return nearest;
+    }
+
+    //去除选中效果
+    document.addEventListener("selectstart",event => event.preventDefault())
+</script>

@@ -1,0 +1,27 @@
+<!--
+ * @Author: BaoTong
+ * @Date: 2020-11-05 23:11:33
+ * @LastEditors: BaoTong
+ * @LastEditTime: 2020-11-06 00:34:15
+ * @FilePath: \week05\Proxy\x.html
+ * @Description: edit
+-->
+<script>
+    let object ={
+        a:1,
+        b:2
+    }
+
+    let po = reactive(object)
+
+    function reactive(object){
+        return new Proxy(object,{
+        set(obj,prop,val){
+            console.log(obj,prop,val)
+        },
+        get(obj,prop){
+            console.log(obj,prop)
+        }
+    })
+    }
+</script>
